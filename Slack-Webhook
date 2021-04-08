@@ -1,0 +1,56 @@
+Once you have created a webhook channel for Slack follow steps ↓
+
+attach to container by typing cmd: sudo docker exec -it (ContainerName) /bin/bash
+
+then navigate to path work directory in container: /opt/opennms/etc
+
+Find notificationCommands.xml and modify it using vi or nano
+
+
+##sudo nano notificationCommands.xml##
+
+ </command>
+   <command binary="false">
+      <name>slack</name>
+      <execute>org.opennms.netmgt.notifd.SlackNotificationStrategy</execute>
+      <comment>class for sending messages to a Slack team channel for notifications</comment>
+      <argument streamed="false">
+         <switch>-subject</switch>
+      </argument>
+      <argument streamed="false">
+         <switch>-tm</switch>
+      </argument>
+   </command>
+</notification-commands>
+
+
+save and close vi: :wq or nano ctrl+X
+
+Then CD to opennms.properties.d while in the same dir /opt/opennms/etc
+
+once in /opt/opennms/etc/opennms.properties.d → create a new file called slack.properties
+
+##In slack.properties add your webhook url and following lines##
+
+org.opennms.netmgt.notifd.slack.webhookURL=https://hooks.slack.com/services/xxxx/xxxxx/xxxxxxxxx
+org.opennms.netmgt.notifd.slack.username=opennms
+org.opennms.netmgt.notifd.slack.channel=#opennmsnotifications (Replace with name of your channel)
+
+NOTE: You should be good after this. But you still have to configure the GUI 
+Turn on Notification Status in Settings 
+
+Then: 
+Login to opennms
+Go to the settings icon; you have to be an Admin
+Navigate to configure Notifications (Note: by default notifications are turned off. Make sure to enable it after the modifications)
+Select Configure Modification Path
+I just edited the Email-Admin setting to use slack instead of javamail
+This is after you click the first edit; then select edit on initial targets
+Leave defaults and click next step 
+Select next step again
+Here change the default javamail to slack, hit next and then at the next page save/finish
+YOU ARE DONE: you should receive emails to your Slack channel
+
+
+
+
